@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <h1>Welcome to Movies page</h1>
+  {% if movies %}
+  <form id="moviewatched" action="/viewed" method="post">
+    {% for movie in movies %}
+    <ul>
+      <li>
+        <label for="movie-{{movie.id}}"><a href="\movie?id={{ movie.id }}">{{ movie.title }}</a></label>
+        <input type="submit" name="movie-{{movie.id}}" id="movie-{{movie.id}}" value="movie-{{movie.id}}" />
+      </li> 
+    </ul>
+    {% endfor %}
+  </form>
+  {% endif %}
+</body>
+</html>
