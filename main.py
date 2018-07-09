@@ -5,12 +5,11 @@ from datetime import datetime
 
 connection_string = f'mysql+pymysql://{username}:{password}@{host}:{port}/{database}'
 app = Flask(__name__)
-app.config['DEBUG'] = False
+app.config['DEBUG'] = True
 app.config['ENV'] = 'development'
 app.config['SQLALCHEMY_ECHO'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = connection_string
 db = SQLAlchemy(app)
-db_session = db.session
 app.secret_key = app_secret_key
 
 class Movies(db.Model):
@@ -35,6 +34,8 @@ class Directors(db.Model):
 
 class Viewers(db.Model):
   viewer_id = db.Column(db.Integer, primary_key=True)
+  username = db.Column(db.String(10))
+  password = db.Column(db.String(45))
   firstname = db.Column(db.String(45))
   lastname = db.Column(db.String(45))
   viewings =  db.relationship('Viewings', backref='viewers')
@@ -53,8 +54,112 @@ class Viewings(db.Model):
 
 @app.route('/')
 def index():
+  usrmsg = request.args.get('msg')
   movies = Movies.query.all()
-  return render_template('index.html', movies = movies)
+  return render_template('index.html', movies = movies,usrmsg = usrmsg )
+
+@app.route('/register', methods = ['POST', 'GET'])
+def register():
+  if request.method == 'GET':
+    errormsg = request.args.get('error')
+    return render_template('viewer_registration.html', errormsg = errormsg)
+
+  elif request.method == 'POST':
+    print("Inside the register post method")
+    req_username = request.form.get('username')
+    req_password = request.form.get('password')
+    print(f"Req Username - {req_username} | Req Password - {req_password}")
+    if req_password and req_username:
+      if req_password == request.form.get('verifypassword'):
+        existinguser = Viewers.query.filter_by(username = req_username).first()
+        if existinguser:
+          errormsg = "Username already exists! Please try with a different username"
+          return redirect(f'/register?error={errormsg}')
+        viewer = Viewers()
+        viewer.firstname = request.form.get('firstname')
+        viewer.lastname = request.form.get('lastname')
+        viewer.username = req_username
+        viewer.password = req_password
+        db.session.add(viewer)
+        db.session.commit()
+        usrmessage = "Registration was successfull"
+        session[username] = req_username
+        return redirect(f'/?msg={usrmessage}')
+      else:
+        errormsg = "Registration failed - The password and verify password didn't match"
+        return redirect(f'/register?error={errormsg}')
+    else:
+      errormsg = "Registration failed - The username and password are mandotary"
+      return redirect(f'/register?error={errormsg}')
+
+@app.route('/login', methods = ['POST', 'GET'])
+def login():
+  if session.get('username'):
+    usrmessage = "Already Logged-in, Please logout before login again"
+    return redirect(f'/?msg={usrmessage}')
+    
+  if request.method == 'GET':
+    errormsg = request.args.get('error')
+    return render_template('login.html', errormsg = errormsg)
+  
+  else:
+    req_username = request.form.get('username')
+    req_password = request.form.get('password')
+    print(f"Req Username - {req_username} | Req Password - {req_password}")
+    if req_username and req_password:
+      viewer = Viewers.query.filter_by(username = req_username).first()
+      if viewer:
+        if req_password == viewer.password:
+          usrmessage = "Login was successfull"
+          session['username'] = req_username
+          return redirect(f'/?msg={usrmessage}')
+    
+@app.route('/logout', methods = ['GET'])
+def logout():
+  if session.get('username'):
+    del session['username']
+    usrmessage = "Logout Successfull!"
+    return redirect(f'/?msg={usrmessage}')
+  else:
+    usrmessage = "No logged user to logout"
+    return redirect(f'/?msg={usrmessage}')
+
+@app.route('/addmovies', methods = ['POST', 'GET'])
+def addmovies():
+  if not session.get('username'):
+    usrmessage = "Please login before Adding movies"
+    return redirect(f'/?msg={usrmessage}')
+  
+  if request.method == 'GET':
+    errormsg = request.args.get('error')
+    return render_template('addmovies.html', errormsg = errormsg)
+  
+  else:
+    req_movie_title = request.form.get('title')
+    req_movie_year = request.form.get('year')
+    req_movie_director_f = request.form.get('firstname')
+    req_movie_director_l = request.form.get('lastname') 
+    req_movie_director_c = request.form.get('country') 
+
+    if req_movie_title and req_movie_year and req_movie_director_f and req_movie_director_l and req_movie_director_c:
+      director = Directors()
+      director.firstname = req_movie_director_f
+      director.lastname = req_movie_director_l
+      director.country = req_movie_director_c
+      db.session.add(director)
+      db.session.flush()
+      movie = Movies()
+      movie.title = req_movie_title
+      movie.year = req_movie_year
+      movie.director_id = director.director_id
+      db.session.add(movie)
+      db.session.commit()
+      
+      usrmessage = f"You movies '{req_movie_title}' has been added"
+      return redirect(f'/?msg={usrmessage}')
+    else:
+      error = "All the fields are mandatory"
+      return redirect(f'/addmovies?error={error}')
 
 def main():
   from sqlalchemy import create_engine, inspect

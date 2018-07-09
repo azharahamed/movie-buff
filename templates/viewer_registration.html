@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <div id = 'navigation'>
+    <a href="/">Home</a> |
+    <a href="/register">User Registration</a> |
+    <a href="/addmovies">Add Movies</a> |
+    <a href="/login">Login</a> |
+    <a href="/logout">Logout</a> |
+  </div>
+  <h1>Welcome to Registration Page !</h1>
+
+  {% if errormsg %}
+    <p style="color:red;">{{ errormsg }}</p>
+  {% endif %}
+
+  <form action="/register" method="post">
+    <table>
+      <tr>
+        <th><label for="username">Username</label></th>
+        <th><input type="text" name="username"></th>
+      </tr>
+      <tr>
+          <th><label for="password">Password</label></th>
+          <th><input type="password" name="password"></th>
+      </tr>
+      <tr>
+          <th><label for="verifypassword">Verify Password</label></th>
+          <th><input type="password" name="verifypassword"></th>
+      </tr>
+      <tr>
+          <th><label for="firstname">First Name</label></th>
+          <th><input type="text" name="firstname"></th>
+      </tr>
+      <tr>
+          <th><label for="lastname">Last Name</label></th>
+          <th><input type="text" name="lastname"></th>
+      </tr>
+      <tr>
+          <th></th>
+          <th><input type="submit" name="submit"></th>
+      </tr>
+    </table>
+  </form>
+  
+</body>
+</html>

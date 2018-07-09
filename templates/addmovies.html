@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <div id = 'navigation'>
+    <a href="/">Home</a> |
+    <a href="/register">User Registration</a> |
+    <a href="/addmovies">Add Movies</a> |
+    <a href="/login">Login</a> |
+    <a href="/logout">Logout</a> |
+  </div>
+  <h1>Add Movies!</h1>
+  {% if errormsg %}
+    <p style="color:red;">{{ errormsg }}</p>
+  {% endif %}
+
+  <form action="/addmovies" method="post">
+    <table>
+      <tr>
+        <th><label for="title">Title</label></th>
+        <th><input type="text" name="title"></th>
+      </tr>
+      <tr>
+          <th><label for="year">Year</label></th>
+          <th><input type="text" name="year"></th>
+      </tr>
+      <tr>
+          <th><label for="firstname">Director First Name</label></th>
+          <th><input type="text" name="firstname"></th>
+      </tr>
+      <tr>
+          <th><label for="lastname">Director Last Name</label></th>
+          <th><input type="text" name="lastname"></th>
+      </tr>
+      <tr>
+          <th><label for="country">Director Country</label></th>
+          <th><input type="text" name="country"></th>
+      </tr>
+      <tr>
+          <th></th>
+          <th><input type="submit" name="submit"></th>
+      </tr>
+    </table>
+  </form>
