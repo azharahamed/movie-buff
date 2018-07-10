@@ -30,8 +30,15 @@
     {% for movie in movies %}
     <ul>
       <li>
-        <label for="movie-{{movie.movie_id}}"><a href="/movie?id={{movie.movie_id }}">{{ movie.title }}</a></label>
-        <input type="submit" name="movie-{{movie.movie_id}}" id="movie-{{movie.movie_id}}" value="Add to my viewlist" />
+          <form id="moviewatched" action="/viewed" method="post">
+            <label for="movie-{{movie.movie_id}}"><a href="/movie?id={{movie.movie_id }}">{{ movie.title }}</a></label>
+            <input type="hidden" name="movieid" value="{{ movie.movie_id }}"/>
+            {% if movie.movie_id in alreadywatched %}
+            Already Watched!
+            {% else %}
+            <input type="submit" value="I Watched it!" />  
+            {% endif %}
+        </form>
       </li> 
     </ul>
     {% endfor %}

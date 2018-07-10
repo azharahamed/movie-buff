@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <div id = 'navigation'>
+    <a href="/">Home</a> |
+    <a href="/register">User Registration</a> |
+    <a href="/addmovies">Add Movies</a> |
+    <a href="/login">Login</a> |
+    <a href="/logout">Logout</a> |
+  </div>
+{% if movie and director %}
+  <h1>{{ movie.title }}</h1>
+  <table>
+    <tr>
+      <th>Title :</th>
+      <th>{{ movie.title }}</th>
+    </tr>
+    <tr>
+        <th>Year :</th>
+        <th>{{ movie.year }}</th>
+    </tr>
+    <tr>
+        <th>Director :</th>
+        <th>{{ director.firstname }} {{ director.lastname }}</th>
+    </tr>
+  </table>
+{% endif %}
+</body>
+</html>
